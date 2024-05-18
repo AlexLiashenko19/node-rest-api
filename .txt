@@ -1,2 +1,0 @@
-DB_CONNECT = mongodb+srv://Sasha:b5WwqnopM9Lt8Xdo@contacts.qi83kt3.mongodb.net/db-contacts
-Password = b5WwqnopM9Lt8Xdo
