@@ -26,17 +26,6 @@ async function addContactNew(data) {
   return newContact;
 }
 
-async function updateById(id, data) {
-  const contacts = await listContacts();
-  const index = contacts.findIndex((item) => item.id === id);
-  if (index === -1) {
-    return null;
-  }
-  contacts[index] = { id, ...data };
-  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-  return contacts[index];
-}
-
 async function deleteById(id) {
   const contacts = await listContacts();
   const index = contacts.findIndex((contact) => contact.id === id);
@@ -46,6 +35,17 @@ async function deleteById(id) {
   const [result] = contacts.splice(index, 1);
   await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
   return result;
+}
+
+async function updateById(id, data) {
+  const contacts = await listContacts();
+  const index = contacts.findIndex((item) => item.id === id);
+  if (index === -1) {
+    return null;
+  }
+  contacts[index] = { id, ...data };
+  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+  return contacts[index];
 }
 
 module.exports = {

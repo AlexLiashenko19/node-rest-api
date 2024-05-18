@@ -26,7 +26,6 @@ const getAllContacts = async (req, res) => {
 const getOneContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    console.log(id);
     const result = await getContactsById(id);
     res.json(result);
     if (!result) {
