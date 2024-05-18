@@ -2,13 +2,11 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const { DB_HOST } = process.env;
 
 const contactsRouter = require("./routes/contactsRouter.js");
 
 const app = express();
-
-const DB_HOST =
-  "mongodb+srv://Sasha:b5WwqnopM9Lt8Xdo@contacts.qi83kt3.mongodb.net/db-contacts";
 
 mongoose.set("strictQuery", true);
 
@@ -31,6 +29,7 @@ mongoose
   .connect(DB_HOST)
   .then(() => {
     app.listen(3000);
+    console.log("Database connection successful");
   })
   .catch((error) => {
     console.log(error.message);
