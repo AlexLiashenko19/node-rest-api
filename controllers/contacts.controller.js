@@ -17,6 +17,7 @@ const getAllContacts = async (req, res) => {
     const result = await listContacts();
     res.json(result);
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       message: "Server error",
     });
