@@ -8,49 +8,34 @@ async function listContacts() {
   return data;
 }
 
-// async function getContactsById(id) {
-//   const contacts = await listContacts();
-//   const result = contacts.find((contact) => contact.id === id);
-//   return result || null;
-// }
+async function getContactsById(id) {
+  const result = Contact.findById(id);
+  return result;
+}
 
-// async function addContactNew(data) {
-//   const contact = await listContacts();
-//   const newContact = {
-//     id: nanoid(),
-//     ...data,
-//   };
-//   contact.push(newContact);
-//   await fs.writeFile(contactsPath, JSON.stringify(contact, null, 2));
-//   return newContact;
-// }
+async function deleteById(id) {
+  const result = await Contact.findByIdAndDelete(id);
+  return result;
+}
 
-// async function deleteById(id) {
-//   const contacts = await listContacts();
-//   const index = contacts.findIndex((contact) => contact.id === id);
-//   if (index === -1) {
-//     return null;
-//   }
-//   const [result] = contacts.splice(index, 1);
-//   await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-//   return result;
-// }
+async function addContactNew(data) {
+  const contact = await Contact.create(data);
+  return contact;
+}
 
-// async function updateById(id, data) {
-//   const contacts = await listContacts();
-//   const index = contacts.findIndex((item) => item.id === id);
-//   if (index === -1) {
-//     return null;
-//   }
-//   contacts[index] = { ...contacts[index], ...data };
-//   await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-//   return contacts[index];
-// }
+async function updateById(id, data) {
+  const result = await Contact.findByIdAndUpdate(id, data, {
+    lean: true,
+    new: true,
+  });
+  console.log(result);
+  return result;
+}
 
 module.exports = {
   listContacts,
-  // getContactsById,
-  // addContactNew,
-  // updateById,
-  // deleteById,
+  getContactsById,
+  deleteById,
+  addContactNew,
+  updateById,
 };
