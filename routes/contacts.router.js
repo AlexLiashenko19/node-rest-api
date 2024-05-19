@@ -5,18 +5,18 @@ const {
   deleteContact,
   createContact,
   updateContact,
-} = require("../controllers/contactsController");
+} = require("../controllers/contacts.controller");
 
 const contactsRouter = express.Router();
 
 contactsRouter.get("/", getAllContacts);
 
-contactsRouter.get("/:id", getOneContact);
+// contactsRouter.get("/:id", getOneContact);
 
-contactsRouter.delete("/:id", deleteContact);
+// contactsRouter.delete("/:id", deleteContact);
 
-contactsRouter.post("/", createContact);
+// contactsRouter.post("/", createContact);
 
-contactsRouter.put("/:id", updateContact);
+// contactsRouter.put("/:id", updateContact);
 
 module.exports = contactsRouter;
