@@ -1,6 +1,4 @@
 const fs = require("fs").promises;
-const path = require("path");
-const { nanoid } = require("nanoid");
 const { Contact } = require("../models/contact");
 
 async function listContacts() {
@@ -28,7 +26,6 @@ async function updateById(id, data) {
     lean: true,
     new: true,
   });
-  console.log(result);
   return result;
 }
 

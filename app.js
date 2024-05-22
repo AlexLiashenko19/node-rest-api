@@ -1,5 +1,4 @@
 const express = require("express");
-const morgan = require("morgan");
 const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
@@ -7,15 +6,16 @@ require("dotenv").config();
 const { DB_HOST } = process.env;
 
 const contactsRouter = require("./routes/contacts.router.js");
+const authRouter = require("./routes/auth.js");
 
 const app = express();
 
 mongoose.set("strictQuery", true);
 
-app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 
+app.use("/api/auth", authRouter);
 app.use("/api/contacts", contactsRouter);
 
 app.use((_, res) => {

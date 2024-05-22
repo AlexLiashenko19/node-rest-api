@@ -14,13 +14,11 @@ const {
 
 const getAllContacts = async (req, res) => {
   try {
-    const result = await listContacts();
+    const { _id: owner } = req.user;
+    const result = await listContacts(owner);
     res.json(result);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: "Server error",
-    });
+    next(error);
   }
 };
 
@@ -52,7 +50,8 @@ const deleteContact = async (req, res) => {
 
 const createContact = async (req, res, next) => {
   try {
-    const { error } = createContactSchema.validate(req.body);
+    const { _id: owner } = req.user;
+    const { error } = createContactSchema.validate({ ...req.body, owner });
     if (error) {
       throw HttpError(400, error.message);
     }

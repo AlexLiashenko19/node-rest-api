@@ -6,17 +6,18 @@ const {
   createContact,
   updateContact,
 } = require("../controllers/contacts.controller");
+const { authenticate } = require("../middlewares/authenticate");
 
 const contactsRouter = express.Router();
 
-contactsRouter.get("/", getAllContacts);
+contactsRouter.get("/", authenticate, getAllContacts);
 
-contactsRouter.get("/:id", getOneContact);
+contactsRouter.get("/:id", authenticate, getOneContact);
 
-contactsRouter.delete("/:id", deleteContact);
+contactsRouter.delete("/:id", authenticate, deleteContact);
 
-contactsRouter.post("/", createContact);
+contactsRouter.post("/", authenticate, createContact);
 
-contactsRouter.put("/:id", updateContact);
+contactsRouter.put("/:id", authenticate, updateContact);
 
 module.exports = contactsRouter;
