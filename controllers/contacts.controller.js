@@ -6,7 +6,7 @@ const {
   deleteById,
 } = require("../services/contacts.service");
 
-const { HttpError } = require("../helpers/HttpError");
+const { HttpError } = require("../helpers/index");
 const {
   createContactSchema,
   updateContactSchema,
@@ -15,7 +15,8 @@ const {
 const getAllContacts = async (req, res) => {
   try {
     const { _id: owner } = req.user;
-    const result = await listContacts(owner);
+    const { page = 1, limit = 10 } = req.query;
+    const result = await listContacts(owner, page, limit);
     res.json(result);
   } catch (error) {
     next(error);
@@ -51,11 +52,11 @@ const deleteContact = async (req, res) => {
 const createContact = async (req, res, next) => {
   try {
     const { _id: owner } = req.user;
-    const { error } = createContactSchema.validate({ ...req.body, owner });
+    const { error } = createContactSchema.validate({ ...req.body });
     if (error) {
       throw HttpError(400, error.message);
     }
-    const result = await addContactNew(req.body);
+    const result = await addContactNew(req.body, owner);
     res.status(201).json(result);
   } catch (error) {
     next(error);
