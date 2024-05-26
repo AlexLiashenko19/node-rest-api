@@ -1,9 +1,23 @@
-const { Schema, model } = require("mongoose");
-const Joi = require("joi");
+import { Schema, model, Document } from "mongoose";
+import Joi from "joi";
 
 const emailRegexp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-const userSchema = new Schema({
+interface IUser extends Document {
+  email: string;
+  password: string;
+  token?: string;
+  name: string;
+  subscription: "starter" | "pro" | "business";
+  avatarURL: string;
+  _id: string;
+}
+
+const userSchema = new Schema<IUser>({
+  name: {
+    type: String,
+    required: [true, "Set name for contact"],
+  },
   password: {
     type: String,
     required: [true, "Password is required"],
@@ -38,14 +52,9 @@ const loginSchema = Joi.object({
   password: Joi.string().min(6).required(),
 });
 
-const schemas = {
+export const schemas = {
   registerSchema,
   loginSchema,
 };
 
-const User = model("user", userSchema);
-
-module.exports = {
-  User,
-  schemas,
-};
+export const User = model<IUser>("user", userSchema);

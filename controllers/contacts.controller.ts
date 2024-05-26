@@ -1,18 +1,28 @@
-const {
+import { NextFunction } from "express";
+import { Request, Response } from "express";
+import {
   listContacts,
   getContactsById,
   addContactNew,
   updateById,
   deleteById,
-} = require("../services/contacts.service");
-
-const { HttpError } = require("../helpers/index");
-const {
+} from "../services/contacts.service";
+import { HttpError } from "../helpers/index";
+import {
   createContactSchema,
   updateContactSchema,
-} = require("../schemas/contactsSchemas");
+} from "../schemas/contactsSchemas";
 
-const getAllContacts = async (req, res) => {
+interface GetAllContactsQueryParams {
+  page?: number;
+  limit?: number;
+}
+
+export const getAllContacts = async (
+  req: Request<{}, {}, {}, GetAllContactsQueryParams>,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { _id: owner } = req.user;
     const { page = 1, limit = 10 } = req.query;
@@ -23,7 +33,11 @@ const getAllContacts = async (req, res) => {
   }
 };
 
-const getOneContact = async (req, res, next) => {
+export const getOneContact = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     const result = await getContactsById(id);
@@ -36,7 +50,11 @@ const getOneContact = async (req, res, next) => {
   }
 };
 
-const deleteContact = async (req, res) => {
+export const deleteContact = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { id } = req.params;
     const result = await deleteById(id);
@@ -49,12 +67,16 @@ const deleteContact = async (req, res) => {
   }
 };
 
-const createContact = async (req, res, next) => {
+export const createContact = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const { _id: owner } = req.user;
     const { error } = createContactSchema.validate({ ...req.body });
     if (error) {
-      throw HttpError(400, error.message);
+      throw HttpError(400);
     }
     const result = await addContactNew(req.body, owner);
     res.status(201).json(result);
@@ -63,11 +85,15 @@ const createContact = async (req, res, next) => {
   }
 };
 
-const updateContact = async (req, res, next) => {
+export const updateContact = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { error } = updateContactSchema.validate(req.body);
     if (error) {
-      throw HttpError(400, error.message);
+      throw HttpError(400);
     }
     const { id } = req.params;
     const result = await updateById(id, req.body);
@@ -78,12 +104,4 @@ const updateContact = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
-
-module.exports = {
-  getAllContacts,
-  getOneContact,
-  deleteContact,
-  createContact,
-  updateContact,
 };

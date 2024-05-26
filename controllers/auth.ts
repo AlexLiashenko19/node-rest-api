@@ -1,14 +1,17 @@
-const fs = require("fs").promises;
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const gravatar = require("gravatar");
-const path = require("path");
-const { User } = require("../models/user");
-const { HttpError } = require("../helpers/index");
-const { SECRET_KEY } = process.env;
+import fs from "fs/promises";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import gravatar from "gravatar";
+import { Request, Response } from "express";
+import path from "path";
+import { User } from "../models/user";
+import { HttpError } from "../helpers/index";
+
 const avatarDir = path.join(__dirname, "../", "public", "avatars");
 
-const register = async (req, res) => {
+const SECRET_KEY = process.env.SECRET_KEY as string;
+
+export const register = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
 
@@ -30,15 +33,18 @@ const register = async (req, res) => {
   });
 };
 
-const login = async (req, res) => {
+export const login = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
-  const user = await User.findOne({ email });
   if (!email) {
+    throw HttpError(401);
+  }
+  const user = await User.findOne({ email });
+  if (!user) {
     throw HttpError(401);
   }
   const passwordCompare = await bcrypt.compare(password, user.password);
   if (!passwordCompare) {
-    throw HttpError(401, "Email or password invalid");
+    throw HttpError(401);
   }
 
   const payload = {
@@ -53,7 +59,7 @@ const login = async (req, res) => {
   });
 };
 
-const getCurrent = async (req, res) => {
+export const getCurrent = async (req: Request, res: Response) => {
   const { email, password } = req.user;
 
   res.json({
@@ -62,7 +68,7 @@ const getCurrent = async (req, res) => {
   });
 };
 
-const logout = async (req, res) => {
+export const logout = async (req: Request, res: Response) => {
   const { _id } = req.user;
   await User.findByIdAndUpdate(_id, { token: null });
 
@@ -71,10 +77,13 @@ const logout = async (req, res) => {
   });
 };
 
-const updateAvatar = async (req, res) => {
+export const updateAvatar = async (req: Request, res: Response) => {
   const { _id } = req.user;
+  if (!req.file) {
+    throw HttpError(400);
+  }
   const { path: tempUpload, originalname } = req.file;
-  const filename = `${id}_${originalname}`;
+  const filename = `${_id}_${originalname}`;
   const resultUpload = path.join(avatarDir, filename);
   await fs.rename(tempUpload, resultUpload);
 
@@ -84,12 +93,4 @@ const updateAvatar = async (req, res) => {
   res.json({
     avatarURL,
   });
-};
-
-module.exports = {
-  register,
-  login,
-  getCurrent,
-  logout,
-  updateAvatar,
 };
