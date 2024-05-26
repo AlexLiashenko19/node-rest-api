@@ -57,6 +57,14 @@ export const deleteContact = async (
 ) => {
   try {
     const { id } = req.params;
+    const contact = await getContactsById(id);
+    if (!contact) {
+      throw HttpError(404);
+    }
+    const userId = req.user._id;
+    if (contact.owner.toString() !== userId) {
+      throw HttpError(403);
+    }
     const result = await deleteById(id);
     if (!result) {
       throw HttpError(404);
@@ -96,6 +104,14 @@ export const updateContact = async (
       throw HttpError(400);
     }
     const { id } = req.params;
+    const contact = await getContactsById(id);
+    if (!contact) {
+      throw HttpError(404);
+    }
+    const userId = req.user._id;
+    if (contact.owner.toString() !== userId) {
+      throw HttpError(403);
+    }
     const result = await updateById(id, req.body);
     if (!result) {
       throw HttpError(404);
